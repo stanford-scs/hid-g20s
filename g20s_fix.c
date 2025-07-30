@@ -122,25 +122,6 @@ static const struct hid_device_id g20s_devices[] = {
 };
 MODULE_DEVICE_TABLE(hid, g20s_devices);
 
-static int g20s_input_mapping(struct hid_device *hdev, struct hid_input *hi,
-                              struct hid_field *field, struct hid_usage *usage,
-                              unsigned long **bit, int *max)
-{
-    /* Only log non-zero usage codes to reduce spam */
-    if (usage->code != 0) {
-        hid_info(hdev, "input_mapping: usage->code = 0x%x (%d)\n", usage->code, usage->code);
-    }
-    
-    /* Remap KEY_SELECT to KEY_ENTER for the OK button */
-    if (usage->code == KEY_SELECT) {
-        hid_info(hdev, "Remapping KEY_SELECT to KEY_ENTER\n");
-        hid_map_usage(hi, usage, bit, max, EV_KEY, KEY_ENTER);
-        return 1;
-    }
-    
-    return 0;
-}
-
 static int g20s_input_event(struct hid_device *hdev, struct hid_field *field,
                            struct hid_usage *usage, __s32 value)
 {
@@ -153,7 +134,6 @@ static int g20s_input_event(struct hid_device *hdev, struct hid_field *field,
     
     /* Intercept KEY_SELECT events and convert to KEY_ENTER */
     if (usage->code == KEY_SELECT) {
-        hid_info(hdev, "Converting KEY_SELECT event to KEY_ENTER (value=%d)\n", value);
         input_report_key(input, KEY_ENTER, value);
         input_sync(input);
         return 1; /* Event handled, don't pass to default handler */
@@ -166,7 +146,6 @@ static struct hid_driver g20s_driver = {
     .name = "g20s",
     .id_table = g20s_devices,
     .report_fixup = g20s_report_fixup,
-    .input_mapping = g20s_input_mapping,
     .event = g20s_input_event,
 };
 module_hid_driver(g20s_driver);
