@@ -1,6 +1,26 @@
 /*
  * G20S Bluetooth Remote HID Driver
- * Fixes truncated HID descriptor issue
+ * Fixes truncated HID descriptor and remaps OK button to Enter
+ *
+ * This work has been placed in the public domain. No human authorship
+ * is claimed for this code, which was generated through automated means.
+ *
+ * DISCLAIMER: This software is provided "as is" without warranty of any kind,
+ * express or implied, including but not limited to the warranties of
+ * merchantability, fitness for a particular purpose, and non-infringement.
+ * In no event shall the contributors be liable for any damages whatsoever
+ * arising from the use of this software. Use at your own risk.
+ *
+ * The contributors disclaim all liability for any direct, indirect, incidental,
+ * special, exemplary, or consequential damages (including, but not limited to,
+ * procurement of substitute goods or services; loss of use, data, or profits;
+ * or business interruption) however caused and on any theory of liability,
+ * whether in contract, strict liability, or tort (including negligence or
+ * otherwise) arising in any way out of the use of this software, even if
+ * advised of the possibility of such damage.
+ *
+ * By using this software, you acknowledge that you have read this disclaimer
+ * and agree to assume all risks associated with its use.
  */
 
 #include <linux/hid.h>
@@ -126,19 +146,19 @@ static int g20s_input_event(struct hid_device *hdev, struct hid_field *field,
                            struct hid_usage *usage, __s32 value)
 {
     struct input_dev *input;
-    
+
     if (!field || !field->hidinput || !field->hidinput->input)
         return 0;
-        
+
     input = field->hidinput->input;
-    
+
     /* Intercept KEY_SELECT events and convert to KEY_ENTER */
     if (usage->code == KEY_SELECT) {
         input_report_key(input, KEY_ENTER, value);
         input_sync(input);
         return 1; /* Event handled, don't pass to default handler */
     }
-    
+
     return 0; /* Let default handler process other events */
 }
 
@@ -150,6 +170,7 @@ static struct hid_driver g20s_driver = {
 };
 module_hid_driver(g20s_driver);
 
-MODULE_AUTHOR("Custom G20S Fix");
-MODULE_DESCRIPTION("G20S Bluetooth Remote HID driver with fixed descriptor");
-MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Generated Code - Public Domain");
+MODULE_DESCRIPTION("G20S Bluetooth Remote HID driver with fixed descriptor and key remapping");
+MODULE_LICENSE("Dual BSD/GPL");  // Closest equivalent for public domain that kernel accepts
+MODULE_VERSION("1.0");

@@ -1,0 +1,9 @@
+# Automatically load hid-g20s driver for G20S Bluetooth Remote
+# This rule triggers when the G20S device is detected and loads the custom driver
+
+SUBSYSTEM=="hid", ATTRS{modalias}=="hid:b0005g0001v00001D5Ap0000C081", \
+  RUN+="/sbin/modprobe hid-g20s"
+
+# Alternative rule that matches on vendor/product ID
+SUBSYSTEM=="bluetooth", ATTR{product}=="0xc081", ATTR{vendor}=="0x1d5a", \
+  RUN+="/sbin/modprobe hid-g20s"

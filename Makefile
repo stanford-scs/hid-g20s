@@ -1,11 +1,18 @@
-obj-m += g20s_fix.o
-KDIR := /lib/modules/$(shell uname -r)/build
+obj-m += hid-g20s.o
+
+KVERSION := $(shell uname -r)
+KDIR := /lib/modules/$(KVERSION)/build
+PWD := $(shell pwd)
 
 all:
-	make -C $(KDIR) M=$(PWD) modules
+	$(MAKE) -C $(KDIR) M=$(PWD) modules
 
 clean:
-	make -C $(KDIR) M=$(PWD) clean
+	$(MAKE) -C $(KDIR) M=$(PWD) clean
+	rm -f *~ .*~
 
-install:
-	sudo insmod g20s_fix.ko
+install: all
+	$(MAKE) -C $(KDIR) M=$(PWD) modules_install
+	depmod -a
+
+.PHONY: all clean install
