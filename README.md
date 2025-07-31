@@ -80,7 +80,7 @@ sudo modprobe hid-g20s
 
 After installation, pair your G20S remote with your system:
 
-1. Put the remote in pairing mode (usually hold OK + Home buttons)
+1. Put the remote in pairing mode (hold OK + Undo buttons)
 2. Use `bluetoothctl` to pair:
    ```bash
    bluetoothctl
